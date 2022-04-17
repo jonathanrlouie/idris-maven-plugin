@@ -1,4 +1,4 @@
-package com.github.jonathanrlouie;
+package io.github.jonathanrlouie;
 
 
 import org.apache.maven.plugin.testing.MojoRule;
