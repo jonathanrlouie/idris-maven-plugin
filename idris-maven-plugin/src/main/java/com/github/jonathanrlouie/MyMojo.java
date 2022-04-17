@@ -1,4 +1,4 @@
-package sample.plugin;
+package com.github.jonathanrlouie;
 
 
 import org.apache.maven.plugin.AbstractMojo;
