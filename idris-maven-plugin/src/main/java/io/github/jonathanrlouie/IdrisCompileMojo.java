@@ -97,7 +97,7 @@ public class IdrisCompileMojo extends AbstractMojo
     private ClassLoader getCompilerClassLoader(String idrisHome) throws Exception {
         if (idrisHome == null || idrisHome.isEmpty()) {
             // TODO: When Idris2 compiler jar is uploaded to Maven Central, change this to use getRemoteCompilerClassLoader()
-            return getLocalCompilerClassLoader("");
+	    throw new Exception("idris.home property is not specified in the POM file");
 	} else {
             return getLocalCompilerClassLoader(idrisHome);
         }
@@ -105,7 +105,17 @@ public class IdrisCompileMojo extends AbstractMojo
 
     private ClassLoader getLocalCompilerClassLoader(String idrisHome) throws Exception {
         Set<File> d = new TreeSet<>();
-        for (File f : new File(idrisHome).listFiles()) {
+        File idrisHomeFile = new File(idrisHome);
+	if (idrisHomeFile == null) {
+            throw new Exception("Unable to find Idris home file " + idrisHome);
+	}
+
+	File[] idrisHomeFiles = idrisHomeFile.listFiles();
+	if (idrisHomeFiles == null) {
+	    throw new Exception("Either Idris home " + idrisHome + " was not a directory, or an I/O error occurred");
+	}
+
+        for (File f : idrisHomeFiles) {
           String name = f.getName();
           if (name.endsWith(".jar")) {
             d.add(f);
