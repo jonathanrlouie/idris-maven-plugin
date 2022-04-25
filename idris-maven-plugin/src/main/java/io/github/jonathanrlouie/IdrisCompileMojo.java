@@ -90,7 +90,7 @@ public class IdrisCompileMojo extends AbstractMojo
             String mainClassName = compilerMainClassName(idrisClassName);
             cmd.run(mainClassName, cl, getLog());
         } catch (Exception e) {
-            e.printStackTrace();
+	    throw new MojoExecutionException("Source error: " + e, e);
         }
     }
 
