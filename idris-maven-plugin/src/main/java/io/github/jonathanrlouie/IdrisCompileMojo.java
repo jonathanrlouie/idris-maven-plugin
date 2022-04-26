@@ -88,7 +88,7 @@ public class IdrisCompileMojo extends AbstractMojo
 	    cmd.addArgs(mainFile.getAbsolutePath());
 	    ClassLoader cl = getCompilerClassLoader(idrisHome);
             String mainClassName = compilerMainClassName(idrisClassName);
-            cmd.run(mainClassName, cl, getLog());
+            cmd.run(mainClassName, cl);
         } catch (Exception e) {
 	    throw new MojoExecutionException("Source error: " + e, e);
         }

@@ -76,7 +76,7 @@ public class IdrisRunMojo extends AbstractMojo
         try {
             JavaCommand cmd = new JavaCommand();
 	    ClassLoader cl = getAppClassLoader(idrisHome);
-            cmd.run(mainClassName, cl, getLog());
+            cmd.run(mainClassName, cl);
         } catch (Exception e) {
             e.printStackTrace();
         }

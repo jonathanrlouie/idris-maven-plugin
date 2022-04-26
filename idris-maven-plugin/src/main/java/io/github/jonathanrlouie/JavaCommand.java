@@ -10,11 +10,11 @@ import org.apache.maven.plugin.logging.Log;
 public class JavaCommand {
     private List<String> args = new ArrayList();
 
-    public void run(String mainClassName, ClassLoader cl, Log logger) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public void run(String mainClassName, ClassLoader cl) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (cl == null) {
           cl = Thread.currentThread().getContextClassLoader();
         }
-	logger.info("Main Class Name: " + mainClassName);
+
         Class<?> mainClass = cl.loadClass(mainClassName);
         Method mainMethod = mainClass.getMethod("main", String[].class);
         int mods = mainMethod.getModifiers();
@@ -22,10 +22,6 @@ public class JavaCommand {
             || !Modifier.isStatic(mods)
             || !Modifier.isPublic(mods)) {
           throw new NoSuchMethodException("main");
-        }
-
-	for (String arg : this.args) {
-	    logger.info(arg);
         }
 
         String[] argArray = this.args.toArray(new String[] {});
