@@ -37,7 +37,7 @@ public class IdrisRunMojoTest
 
         IdrisRunMojo runMojo = (IdrisRunMojo) rule.lookupConfiguredMojo(pom, "run");
         assertNotNull(runMojo);
-        //runMojo.execute();
+        runMojo.execute();
     }
 }
 

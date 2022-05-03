@@ -12,7 +12,8 @@
 
   <properties>
     <idris.home>/nix/store/xjszb9i8mbfbz7qvfjx1xdqi6nxfjwjy-source/lib/</idris.home>
-    <mainClass>M_main.Main</mainClass>
+    <mainClass>output.Main</mainClass>
+    <outputDir>src/test/resources/project-to-test/</outputDir>
   </properties>
 
   <build>
