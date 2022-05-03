@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import java.io.File;
 
-public class IdrisCompileMojoTest
+public class IdrisRunMojoTest
 {
     @Rule
     public MojoRule rule = new MojoRule()
@@ -29,23 +29,15 @@ public class IdrisCompileMojoTest
      * @throws Exception if any
      */
     @Test
-    public void testCompileApp() throws Exception
+    public void testRunApp() throws Exception
     {
         File pom = new File("target/test-classes/project-to-test/");
         assertNotNull(pom);
         assertTrue(pom.exists());
 
-        IdrisCompileMojo compileMojo = (IdrisCompileMojo) rule.lookupConfiguredMojo(pom, "compile");
-        assertNotNull(compileMojo);
-        compileMojo.execute();
-
-	String outputPath = (String) rule.getVariableValueFromObject(compileMojo, "buildOutput");
-        File outputDirectory = new File(outputPath + "_app");
-        assertNotNull(outputDirectory);
-        assertTrue(outputDirectory.exists());
-
-        File outputJar = new File(outputDirectory, "output.jar");
-        assertTrue(outputJar.exists());
+        IdrisRunMojo runMojo = (IdrisRunMojo) rule.lookupConfiguredMojo(pom, "run");
+        assertNotNull(runMojo);
+        //runMojo.execute();
     }
 }
 

@@ -10,9 +10,17 @@ import org.apache.maven.plugin.logging.Log;
 public class JavaCommand {
     private List<String> args = new ArrayList();
 
-    public void run(String mainClassName, ClassLoader cl) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public void run(String mainClassName, ClassLoader cl, Log logger) throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         if (cl == null) {
           cl = Thread.currentThread().getContextClassLoader();
+        }
+
+        if (this.args.isEmpty()) {
+	    logger.debug("empty args list");
+	}
+
+	for (String arg : this.args) {
+	    logger.debug("cmd arg: " + arg);
         }
 
         Class<?> mainClass = cl.loadClass(mainClassName);

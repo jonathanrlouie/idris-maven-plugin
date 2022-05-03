@@ -3,6 +3,7 @@ package io.github.jonathanrlouie;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -75,24 +76,30 @@ public class IdrisRunMojo extends AbstractMojo
     {
         try {
             JavaCommand cmd = new JavaCommand();
-	    ClassLoader cl = getAppClassLoader(idrisHome);
-            cmd.run(mainClassName, cl);
+	    ClassLoader cl = getAppClassLoader(idrisHome, getLog());
+            cmd.run(mainClassName, cl, getLog());
         } catch (Exception e) {
-            e.printStackTrace();
+	    throw new MojoExecutionException("Source error: " + e, e);
         }
     }
 
-    private ClassLoader getAppClassLoader(String idrisHome) throws Exception {
+    private ClassLoader getAppClassLoader(String idrisHome, Log logger) throws Exception {
         Set<File> d = project.getTestClasspathElements().stream().map(File::new).collect(Collectors.toSet());
         for (File f : new File(idrisHome).listFiles()) {
-          String name = f.getName();
-          if (name.endsWith(".jar")) {
-            d.add(f);
-          }
+            String name = f.getName();
+            if (name.endsWith(".jar")) {
+                d.add(f);
+            }
         }
 	List<File> f = d.stream()
             .collect(Collectors.toList());
-	f.add(appJar);
+
+        if (appJar == null) {
+	    throw new Exception("No application jar found at appJar path");
+	}
+
+	// Make sure Application Jar is at beginning of classpath
+	f.add(0, appJar);
 	File[] depJars = f.toArray(new File[] {});
 	URL[] depJarUrls = Arrays.stream(depJars)
             .map(file -> {

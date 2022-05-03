@@ -12,6 +12,7 @@
 
   <properties>
     <idris.home>/nix/store/xjszb9i8mbfbz7qvfjx1xdqi6nxfjwjy-source/lib/</idris.home>
+    <mainClass>M_main.Main</mainClass>
   </properties>
 
   <build>
