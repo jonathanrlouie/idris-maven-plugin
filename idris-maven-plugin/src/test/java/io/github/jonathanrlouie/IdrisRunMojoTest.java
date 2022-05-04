@@ -39,20 +39,5 @@ public class IdrisRunMojoTest
         assertNotNull(runMojo);
         runMojo.execute();
     }
-
-    /**
-     * @throws Exception if any
-     */
-    @Test
-    public void testAutomaticallyDownloadDependenciesAndRun() throws Exception
-    {
-        File pom = new File("target/test-classes/project-with-dependencies/");
-        assertNotNull(pom);
-        assertTrue(pom.exists());
-
-        IdrisRunMojo runMojo = (IdrisRunMojo) rule.lookupConfiguredMojo(pom, "run");
-        assertNotNull(runMojo);
-        runMojo.execute();
-    }
 }
 
