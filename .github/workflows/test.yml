@@ -20,8 +20,8 @@ jobs:
       - name: Install Nix
         uses: cachix/install-nix-action@v17
 
-      - name: Run nix-develop
-        run: nix-develop
+      - name: Run nix develop
+        run: nix develop
         
       - name: Run tests
         working-directory: ./idris-maven-plugin
