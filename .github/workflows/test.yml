@@ -23,6 +23,9 @@ jobs:
       - name: Run nix develop
         run: nix develop
 
+      - name: Copy idris-jvm files
+        run: cp -r $IDRIS2_PREFIX idris-maven-plugin/
+
       - name: Run ls
         working-directory: ./idris-maven-plugin
         run: ls
