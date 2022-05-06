@@ -35,6 +35,10 @@ public class IdrisRunMojoTest
         assertNotNull(pom);
         assertTrue(pom.exists());
 
+        IdrisCompileMojo compileMojo = (IdrisCompileMojo) rule.lookupConfiguredMojo(pom, "compile");
+        assertNotNull(compileMojo);
+        compileMojo.execute();
+
         IdrisRunMojo runMojo = (IdrisRunMojo) rule.lookupConfiguredMojo(pom, "run");
         assertNotNull(runMojo);
         runMojo.execute();
