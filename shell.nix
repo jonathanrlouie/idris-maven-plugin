@@ -8,6 +8,6 @@ pkgs.mkShell {
   shellHook = ''
     export PATH=$PATH:$idrisJvm/bin
     export IDRIS2_PREFIX=$idrisJvm/lib
-    cp -r $IDRIS2_PREFIX idris-maven-plugin/
+    cp -r $IDRIS2_PREFIX ./
   '';
 }
