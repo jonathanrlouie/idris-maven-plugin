@@ -24,3 +24,6 @@ jobs:
 
       - name: Run tests 
         run: nix develop -c mvn test
+
+      - name: Run functional tests 
+        run: nix develop -c ./run_functional_tests.sh
