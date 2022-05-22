@@ -6,7 +6,7 @@ run_test() {
   cd -
 }
 
-echo "Trying pwd from IDRIS2 lib directory to see if it exists in GHA"
-cd lib && pwd
+echo "Trying ls from IDRIS2 lib directory to see if it exists in GHA"
+cd lib && ls
 cd -
 run_test dependencies-test
