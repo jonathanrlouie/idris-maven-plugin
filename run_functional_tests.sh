@@ -6,5 +6,5 @@ run_test() {
   cd -
 }
 
-echo $IDRIS2_PREFIX
+echo "IDRIS2_PREFIX: $IDRIS2_PREFIX"
 run_test dependencies-test
