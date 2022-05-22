@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 FUNCTIONAL_TEST_PATH="src/test/functional"
 
 run_test() {
