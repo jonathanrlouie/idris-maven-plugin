@@ -6,5 +6,7 @@ run_test() {
   cd -
 }
 
-echo "IDRIS2_PREFIX: $IDRIS2_PREFIX"
+echo "Trying pwd from IDRIS2 lib directory to see if it exists in GHA"
+cd lib && pwd
+cd -
 run_test dependencies-test
