@@ -26,4 +26,4 @@ jobs:
         run: nix develop -c mvn test
 
       - name: Run functional tests 
-        run: nix develop -c mvn install && ./run_functional_tests.sh
+        run: nix develop -c (mvn install && ./run_functional_tests.sh)

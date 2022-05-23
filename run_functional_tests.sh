@@ -6,7 +6,5 @@ run_test() {
   cd -
 }
 
-echo "Trying ls from IDRIS2 lib directory to see if it exists in GHA"
-cd lib && ls
-cd -
+mvn install
 run_test dependencies-test
