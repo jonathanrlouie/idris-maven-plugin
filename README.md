@@ -11,9 +11,13 @@ The idris-maven-plugin is used to compile and run Scala code in Maven.
 - Runs Idris applications
 - Automatically downloads dependencies from Maven Central
 
+## Installing the Plugin
+
+To install the plugin, run `mvn install`.
+
 ## How to run the examples
 
-To run the examples, simply run `mvn idris:run` from the root of the example project you want to run.
+To run the examples, run `mvn idris:run` from the root of the example project you want to run.
 
 Note: Currently, the examples must be run from the Nix developer environment. To run them without this environment, you will need to change the example's `idris.home` property in its pom.xml file to point to a local copy of the idris-jvm backend lib folder.
 
