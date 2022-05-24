@@ -13,7 +13,7 @@ The idris-maven-plugin is used to compile and run Scala code in Maven.
 
 ## Installing the Plugin
 
-To install the plugin, run `mvn install`.
+To install the plugin, clone the repository and run `mvn install` from the root of the repository.
 
 ## How to run the examples
 
