@@ -29,6 +29,8 @@ To build the plugin, you need JDK 8 or higher and Maven 3.8.1 or higher. Lower v
 
 From the root of the repository, run `mvn test`.
 
+To run the functional tests, run the `run_functional_tests.sh` script in the root of the repository.
+
 ## Nix Environment
 
 For Nix users, run `nix-develop` in the root of the repository to enter a developer environment, which already has the required versions of the JDK and Maven. It also automatically downloads and installs the [idris-jvm backend](https://github.com/mmhelloworld/idris-jvm).
