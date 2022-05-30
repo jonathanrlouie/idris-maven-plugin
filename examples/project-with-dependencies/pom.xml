@@ -1,0 +1,53 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+     
+  <groupId>example</groupId>
+  <artifactId>project-with-dependencies</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+     
+  <name>project-with-dependencies</name>
+  <url>http://www.myorganization.org</url>
+     
+  <properties>
+    <mainFile>src/main/idris/example/App.idr</mainFile>
+    <mainClass>output.Main</mainClass>
+    <idris.home>lib/</idris.home>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.8</maven.compiler.source>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.version>3.3.9</maven.version>
+    <jackson.version>2.10.0</jackson.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <!-- jsoup HTML parser library @ https://jsoup.org/ -->
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.14.3</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <sourceDirectory>src/main/idris</sourceDirectory>
+    <testSourceDirectory>src/test/idris</testSourceDirectory>
+    <plugins>
+      <plugin>
+        <!-- see https://github.com/jonathanrlouie/idris-maven-plugin -->
+        <groupId>io.github.jonathanrlouie</groupId>
+        <artifactId>idris-maven-plugin</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>run</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>
