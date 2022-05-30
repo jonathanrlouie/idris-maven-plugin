@@ -11,6 +11,20 @@ The idris-maven-plugin is used to compile and run Scala code in Maven.
 - Runs Idris applications
 - Automatically downloads dependencies from Maven Central
 
+## Creating a new Idris Maven project
+
+To create a new Idris Maven project, you can use the [idris-maven-archetype](https://github.com/jonathanrlouie/idris-maven-archetype).
+
+With the archetype plugin installed, run the following Maven command to create a new Idris Maven project from the archetype:
+```
+mvn archetype:generate                                  \
+  -DarchetypeGroupId=io.github.jonathanrlouie           \
+  -DarchetypeArtifactId=idris-maven-archetype           \
+  -DarchetypeVersion=1.0-SNAPSHOT                       \
+  -DgroupId=<my.groupid>                                \
+  -DartifactId=<my-artifactId>
+```
+
 ## Installing the Plugin
 
 To install the plugin, clone the repository and run `mvn install` from the root of the repository.
@@ -40,5 +54,5 @@ For Nix users, run `nix-develop` in the root of the repository to enter a develo
 TODO
 
 ## Planned Features
-
-TODO
+- Support for compiling library code into JARs without needing to specify a main class
+- Automatically download Idris2 compiler and runtime JARs from Maven Central Repository (if they are uploaded there)
