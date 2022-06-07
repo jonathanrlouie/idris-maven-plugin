@@ -22,11 +22,8 @@ jobs:
       - name: Install Nix
         uses: cachix/install-nix-action@v17
 
-      - name: Allow Unfree
-        run: export NIXPKGS_ALLOW_UNFREE=1
-
       - name: Run tests 
-        run: nix develop --impure -c mvn test
+        run: NIXPKGS_ALLOW_UNFREE=1 nix develop --impure -c mvn test
 
       - name: Run functional tests 
-        run: nix develop --impure -c ./run_functional_tests.sh
+        run: NIXPKGS_ALLOW_UNFREE=1 nix develop --impure -c ./run_functional_tests.sh
