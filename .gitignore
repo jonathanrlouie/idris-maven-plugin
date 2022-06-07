@@ -15,6 +15,12 @@ buildNumber.properties
 # https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
 
+# Generated project files
+.classpath
+.factorypath
+.project
+.settings/
+
 # Downloaded files for tests
 lib/
 
