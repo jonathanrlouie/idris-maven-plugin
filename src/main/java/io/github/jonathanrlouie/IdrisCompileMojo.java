@@ -107,8 +107,7 @@ public class IdrisCompileMojo extends AbstractMojo
     }
 
     private ClassLoader getRemoteCompilerClassLoader(Log log) {
-	//Artifact artifact = this.repositorySystem.createArtifact("io.github.mmhelloworld", "idris-jvm-compiler", "0.5.1-SNAPSHOT", "jar");
-	Artifact artifact = this.repositorySystem.createArtifactWithClassifier("io.github.mmhelloworld", "idris-jvm-compiler", "0.5.1-SNAPSHOT", "jar", "idris-jvm-compiler-0.5.1-20220602.041335-1");
+	Artifact artifact = this.repositorySystem.createArtifact("io.github.mmhelloworld", "idris-jvm-compiler", "0.5.1-SNAPSHOT", "jar");
 	Set<Artifact> resolvedArtifacts = this.resolve(artifact);
 	if (resolvedArtifacts.size() == 0) {
 	    throw new RuntimeException("No resolved artifacts found for Idris compiler");

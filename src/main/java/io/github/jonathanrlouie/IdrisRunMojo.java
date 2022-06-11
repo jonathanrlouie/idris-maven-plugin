@@ -1,6 +1,7 @@
 package io.github.jonathanrlouie;
 
-
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
@@ -69,7 +70,7 @@ public class IdrisRunMojo extends AbstractMojo
     /**
      * Used to look up Artifacts in the remote repository.
      */
-    @Component RepositorySystem factory;
+    @Component RepositorySystem repositorySystem;
 
     public void execute()
         throws MojoExecutionException
@@ -77,13 +78,79 @@ public class IdrisRunMojo extends AbstractMojo
         try {
             JavaCommand cmd = new JavaCommand();
 	    ClassLoader cl = getAppClassLoader(idrisHome, getLog());
+
+	    if (mainClassName == null || mainClassName.isEmpty()) {
+                throw new RuntimeException("mainClass property was not set.");
+	    }
+
             cmd.run(mainClassName, cl, getLog());
         } catch (Exception e) {
 	    throw new MojoExecutionException("Source error: " + e, e);
         }
     }
 
-    private ClassLoader getAppClassLoader(String idrisHome, Log logger) throws Exception {
+    private ClassLoader getAppClassLoader(String idrisHome, Log log) throws Exception {
+        if (idrisHome == null || idrisHome.isEmpty()) {
+            return getRemoteAppClassLoader(log);
+	} else {
+            return getLocalAppClassLoader(idrisHome, log);
+        }
+    }
+
+    private ClassLoader getRemoteAppClassLoader(Log logger) throws Exception {
+	Artifact artifact = this.repositorySystem.createArtifact("io.github.mmhelloworld", "idris-jvm-runtime", "0.5.1-SNAPSHOT", "jar");
+	Set<Artifact> resolvedArtifacts = this.resolve(artifact);
+	if (resolvedArtifacts.size() == 0) {
+	    throw new RuntimeException("No resolved artifacts found for idris-jvm-runtime");
+	}
+
+        List<File> jars = resolvedArtifacts.stream()
+	    .map(Artifact::getFile)
+	    .collect(Collectors.toList());
+
+        if (appJar == null) {
+	    throw new Exception("No application jar found at appJar path");
+	}
+
+	// Make sure Application Jar is at beginning of classpath
+	jars.add(0, appJar);
+	File[] depJars = jars.toArray(new File[] {});
+	URL[] depJarUrls = Arrays.stream(depJars)
+            .map(file -> {
+		try {
+                    return file.toURI().toURL();
+                } catch (MalformedURLException e) {
+                    throw new RuntimeException("failed to convert into url " + file, e);
+		}
+            })
+	    .toArray(URL[]::new);
+	return new URLClassLoader(depJarUrls, null);
+    }
+
+    private Set<Artifact> resolve(Artifact artifact) {
+        ArtifactResolutionRequest request = new ArtifactResolutionRequest()
+            .setArtifact(artifact)
+            .setResolveRoot(true)
+            .setResolveTransitively(true)
+            .setServers(this.session.getRequest().getServers())
+            .setMirrors(this.session.getRequest().getMirrors())
+            .setProxies(this.session.getRequest().getProxies())
+            .setLocalRepository(this.session.getLocalRepository())
+            .setRemoteRepositories(this.session.getCurrentProject().getRemoteArtifactRepositories());
+        return this.repositorySystem.resolve(request).getArtifacts();
+    }
+
+    private ClassLoader getLocalAppClassLoader(String idrisHome, Log logger) throws Exception {
+        File idrisHomeFile = new File(idrisHome);
+	if (idrisHomeFile == null) {
+            throw new Exception("Unable to find Idris home file " + idrisHome);
+	}
+
+	File[] idrisHomeFiles = idrisHomeFile.listFiles();
+	if (idrisHomeFiles == null) {
+	    throw new Exception("Either Idris home " + idrisHome + " was not a directory, or an I/O error occurred");
+	}
+
         Set<File> d = project.getTestClasspathElements().stream().map(File::new).collect(Collectors.toSet());
         for (File f : new File(idrisHome).listFiles()) {
             String name = f.getName();
