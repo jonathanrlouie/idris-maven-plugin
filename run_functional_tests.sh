@@ -16,8 +16,4 @@ mvn install
 # it should be able to compile Idris code using a locally supplied compiler
 run_test dependencies-test 
 
-# it should be able to compile Idris code using a compiler downloaded from Maven Central
-# it should be able to run Idris code using a runtime downloaded from Maven Central
-run_test backend-from-maven-central
-
 exit $errs
