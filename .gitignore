@@ -25,4 +25,4 @@ buildNumber.properties
 lib/
 
 # Generated files from tests
-output_app/
+main_app/
