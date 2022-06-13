@@ -12,8 +12,8 @@
 
   <properties>
     <idris.home>lib/</idris.home>
-    <mainClass>output.Main</mainClass>
     <outputDir>src/test/resources/project-to-test/</outputDir>
+    <mainClass>main.Main</mainClass>
   </properties>
 
   <build>

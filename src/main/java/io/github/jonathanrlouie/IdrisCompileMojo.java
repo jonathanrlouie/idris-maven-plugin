@@ -38,7 +38,7 @@ public class IdrisCompileMojo extends AbstractMojo {
      * setting the -o flag of the Idris compiler.
      */
     @Parameter(defaultValue = "main", property = "outputFile")
-    private String buildOutput;
+    private String outputFile;
 
     /**
      * Location of build output directory relative to current directory. Equivalent
@@ -80,7 +80,7 @@ public class IdrisCompileMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         try {
             JavaCommand cmd = new JavaCommand();
-            cmd.addOption("-o", buildOutput);
+            cmd.addOption("-o", outputFile);
             cmd.addOption("--output-dir", outputDir);
             cmd.addArgs(mainFile.getAbsolutePath());
             ClassLoader cl = getCompilerClassLoader(idrisHome, getLog());

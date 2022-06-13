@@ -39,13 +39,13 @@ public class IdrisCompileMojoTest
         assertNotNull(compileMojo);
         compileMojo.execute();
 
-	String output = (String) rule.getVariableValueFromObject(compileMojo, "buildOutput");
+	String outputFile = (String) rule.getVariableValueFromObject(compileMojo, "outputFile");
 	String outputDir = (String) rule.getVariableValueFromObject(compileMojo, "outputDir");
-        File jarOutputDirectory = new File(outputDir + output + "_app");
+        File jarOutputDirectory = new File(outputDir + outputFile + "_app");
         assertNotNull(jarOutputDirectory);
         assertTrue(jarOutputDirectory.exists());
 
-        File outputJar = new File(jarOutputDirectory, "output.jar");
+        File outputJar = new File(jarOutputDirectory, "main.jar");
         assertTrue(outputJar.exists());
     }
 }
