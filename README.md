@@ -25,6 +25,8 @@ mvn archetype:generate                                  \
   -DartifactId=<my-artifactId>
 ```
 
+You should now be able to compile and run the project using `mvn idris:run` from the root of the newly created project.
+
 ## How to run the examples
 To run the examples, run `mvn idris:run` from the root of the example project you want to run.
 
