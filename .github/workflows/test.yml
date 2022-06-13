@@ -23,7 +23,7 @@ jobs:
         uses: cachix/install-nix-action@v17
 
       - name: Run tests 
-        run: NIXPKGS_ALLOW_UNFREE=1 nix develop --impure -c mvn test
+        run: nix-shell -E 'import ./ci_shell.nix' --run 'mvn test'
 
       - name: Run functional tests 
-        run: NIXPKGS_ALLOW_UNFREE=1 nix develop --impure -c ./run_functional_tests.sh
+        run: nix-shell -E 'import ./ci_shell.nix' --run './run_functional_tests.sh'
