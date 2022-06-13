@@ -53,7 +53,7 @@ public class IdrisRunMojo extends AbstractMojo {
     /**
      * Path to the compiled JAR file of the application.
      */
-    @Parameter(defaultValue = "./output_app/output.jar", property = "appJar")
+    @Parameter(defaultValue = "./main_app/main.jar", property = "appJar")
     private File appJar;
 
     /**

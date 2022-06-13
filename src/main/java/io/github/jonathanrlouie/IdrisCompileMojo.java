@@ -34,10 +34,10 @@ public class IdrisCompileMojo extends AbstractMojo {
     protected MavenProject project;
 
     /**
-     * Location of build output relative to build output directory. Equivalent to
+     * Name of the output file. Equivalent to
      * setting the -o flag of the Idris compiler.
      */
-    @Parameter(defaultValue = "output", property = "buildOutput")
+    @Parameter(defaultValue = "main", property = "outputFile")
     private String buildOutput;
 
     /**
