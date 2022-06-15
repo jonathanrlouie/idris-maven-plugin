@@ -64,7 +64,7 @@ public class IdrisCompileMojo extends AbstractMojo {
     /** 
      * Idris 2 version to use.
      */
-    @Parameter(property = "idris.version")
+    @Parameter(defaultValue = "0.5.1", property = "idris.version")
     private String idrisVersion;
 
     /**
@@ -82,8 +82,6 @@ public class IdrisCompileMojo extends AbstractMojo {
     /** Used to look up Artifacts in the remote repository. */
     @Component
     RepositorySystem repositorySystem;
-
-    final String DEFAULT_IDRIS_VERSION = "0.5.1-20220602.041335-1";
 
     public void execute() throws MojoExecutionException {
         try {
@@ -108,8 +106,7 @@ public class IdrisCompileMojo extends AbstractMojo {
     }
 
     private ClassLoader getRemoteCompilerClassLoader(Log log) {
-	final String version = this.idrisVersion == null ? DEFAULT_IDRIS_VERSION : this.idrisVersion;
-        Artifact artifact = this.repositorySystem.createArtifact("io.github.mmhelloworld", "idris-jvm-compiler", version, "jar");
+        Artifact artifact = this.repositorySystem.createArtifact("io.github.mmhelloworld", "idris-jvm-compiler", this.idrisVersion, "jar");
         Set<Artifact> resolvedArtifacts = this.resolve(artifact);
         if (resolvedArtifacts.size() == 0) {
             throw new RuntimeException("No resolved artifacts found for Idris compiler");
