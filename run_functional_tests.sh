@@ -16,4 +16,9 @@ mvn install
 # it should be able to compile Idris code using a locally supplied compiler
 run_test dependencies-test 
 
-exit $errs
+if [ "$errs" == "0" ]; then
+  echo "All tests passed."
+else
+  echo "$errs tests failures."
+  exit 1
+fi
