@@ -44,10 +44,10 @@ To run the functional tests, run the `run_functional_tests.sh` script in the roo
 ## Nix Environment
 Windows users should use WSL and install Nix before following the instructions below.
 
-For Nix users, run `NIXPKGS_ALLOW_UNFREE=1 nix develop --impure` in the root of the repository to enter a developer environment, which already has the required versions of the JDK and Maven. It also automatically downloads and installs the [idris-jvm backend](https://github.com/mmhelloworld/idris-jvm). VSCode is included with a Java plugin installed for easy alignment on code style and formatting, hence the need for `NIXPKGS_ALLOW_UNFREE` and `--impure`.
+For Nix users, `nix develop` in the root of the repository to enter a developer environment, which already has the required versions of the JDK and Maven. It also automatically downloads and installs the [idris-jvm backend](https://github.com/mmhelloworld/idris-jvm).
 
 ## Contributing
-TODO
+If you want to contribute to this project, please fork the repository and open a pull request. Your pull request will be automatically checked for linting and style.
 
 ## Planned Features
 - Add a Help Mojo
