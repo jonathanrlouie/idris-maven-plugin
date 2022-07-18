@@ -31,7 +31,7 @@ import java.net.MalformedURLException;
  */
 @Mojo(name = "run", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
 @Execute(phase = LifecyclePhase.TEST_COMPILE)
-public class IdrisRunMojo extends AbstractMojo {
+public final class IdrisRunMojo extends AbstractMojo {
     /**
      * The maven project.
      */
@@ -89,22 +89,28 @@ public class IdrisRunMojo extends AbstractMojo {
         }
     }
 
-    private ClassLoader getAppClassLoader(String idrisHome, Log log) throws DependencyResolutionRequiredException {
-        if (idrisHome == null || idrisHome.isEmpty()) {
+    private ClassLoader getAppClassLoader(String idrHome, Log log)
+        throws DependencyResolutionRequiredException {
+        if (idrHome == null || idrHome.isEmpty()) {
             return getRemoteAppClassLoader(log);
         } else {
-            return getLocalAppClassLoader(idrisHome, log);
+            return getLocalAppClassLoader(idrHome, log);
         }
     }
 
-    private ClassLoader getRemoteAppClassLoader(Log logger) throws DependencyResolutionRequiredException {
-        Artifact artifact = this.repositorySystem.createArtifact("io.github.mmhelloworld", "idris-jvm-runtime", this.idrisVersion, "jar");
+    private ClassLoader getRemoteAppClassLoader(Log logger) 
+        throws DependencyResolutionRequiredException {
+        Artifact artifact = this.repositorySystem.createArtifact(
+            "io.github.mmhelloworld", "idris-jvm-runtime", this.idrisVersion, "jar");
         Set<Artifact> resolvedArtifacts = this.resolve(artifact);
         if (resolvedArtifacts.size() == 0) {
-            throw new RuntimeException("No resolved artifacts found for idris-jvm-runtime");
+            throw new RuntimeException(
+                "No resolved artifacts found for idris-jvm-runtime");
         }
 
-        List<File> jars = resolvedArtifacts.stream().map(Artifact::getFile).collect(Collectors.toList());
+        List<File> jars = resolvedArtifacts.stream()
+            .map(Artifact::getFile)
+            .collect(Collectors.toList());
         List<File> dependencies = project.getTestClasspathElements()
             .stream()
             .map(File::new)
@@ -114,7 +120,8 @@ public class IdrisRunMojo extends AbstractMojo {
 
         jars.addAll(dependencies);
         if (appJar == null) {
-            throw new RuntimeException("No application jar found at appJar path");
+            throw new RuntimeException(
+                "No application jar found at appJar path");
         }
 
         // Make sure Application Jar is at beginning of classpath
@@ -124,26 +131,34 @@ public class IdrisRunMojo extends AbstractMojo {
             try {
                 return file.toURI().toURL();
             } catch (MalformedURLException e) {
-                throw new RuntimeException("failed to convert into url " + file, e);
+                throw new RuntimeException(
+                    "Failed to convert into url " + file, e);
             }
         }).toArray(URL[]::new);
         return new URLClassLoader(depJarUrls, null);
     }
 
     private Set<Artifact> resolve(Artifact artifact) {
-        ArtifactResolutionRequest request = new ArtifactResolutionRequest().setArtifact(artifact).setResolveRoot(true)
-                .setResolveTransitively(true).setServers(this.session.getRequest().getServers())
-                .setMirrors(this.session.getRequest().getMirrors()).setProxies(this.session.getRequest().getProxies())
-                .setLocalRepository(this.session.getLocalRepository())
-                .setRemoteRepositories(this.session.getCurrentProject().getRemoteArtifactRepositories());
+        ArtifactResolutionRequest request = new ArtifactResolutionRequest()
+            .setArtifact(artifact).setResolveRoot(true)
+            .setResolveTransitively(true).setServers(
+                this.session.getRequest().getServers())
+            .setMirrors(this.session.getRequest().getMirrors())
+            .setProxies(this.session.getRequest().getProxies())
+            .setLocalRepository(this.session.getLocalRepository())
+            .setRemoteRepositories(this.session.getCurrentProject()
+                .getRemoteArtifactRepositories());
         return this.repositorySystem.resolve(request).getArtifacts();
     }
 
-    private ClassLoader getLocalAppClassLoader(String idrisHome, Log logger) throws DependencyResolutionRequiredException {
-        File idrisHomeFile = new File(idrisHome);
+    private ClassLoader getLocalAppClassLoader(
+        final String idrHome, final Log logger)
+        throws DependencyResolutionRequiredException {
+        File idrisHomeFile = new File(idrHome);
         File[] idrisHomeFiles = idrisHomeFile.listFiles();
         if (idrisHomeFiles == null) {
-            throw new RuntimeException("Either Idris home " + idrisHome + " was not a directory, or an I/O error occurred");
+            throw new RuntimeException("Either Idris home " + 
+                idrHome + " was not a directory, or an I/O error occurred");
         }
 
         Set<File> dependencies = project.getTestClasspathElements()
@@ -151,7 +166,7 @@ public class IdrisRunMojo extends AbstractMojo {
             .map(File::new)
             .collect(Collectors.toSet());
 
-        for (File f : new File(idrisHome).listFiles()) {
+        for (File f : new File(idrHome).listFiles()) {
             String name = f.getName();
             if (name.endsWith(".jar")) {
                 dependencies.add(f);
@@ -160,7 +175,8 @@ public class IdrisRunMojo extends AbstractMojo {
         List<File> jars = dependencies.stream().collect(Collectors.toList());
 
         if (appJar == null) {
-            throw new RuntimeException("No application jar found at appJar path");
+            throw new RuntimeException(
+                "No application jar found at appJar path");
         }
 
         // Make sure Application Jar is at beginning of classpath
@@ -170,7 +186,8 @@ public class IdrisRunMojo extends AbstractMojo {
             try {
                 return file.toURI().toURL();
             } catch (MalformedURLException e) {
-                throw new RuntimeException("failed to convert into url " + file, e);
+                throw new RuntimeException(
+                    "Failed to convert into url " + file, e);
             }
         }).toArray(URL[]::new);
         return new URLClassLoader(depJarUrls, null);
