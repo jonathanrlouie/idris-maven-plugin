@@ -29,14 +29,17 @@ import java.net.MalformedURLException;
 /**
  * Goal that runs Idris 2 code.
  */
-@Mojo(name = "run", requiresDependencyResolution = ResolutionScope.TEST, threadSafe = true)
+@Mojo(
+    name = "run",
+    requiresDependencyResolution = ResolutionScope.TEST,
+    threadSafe = true)
 @Execute(phase = LifecyclePhase.TEST_COMPILE)
 public final class IdrisRunMojo extends AbstractMojo {
     /**
      * The maven project.
      */
     @Parameter(property = "project", required = true, readonly = true)
-    protected MavenProject project;
+    private MavenProject project;
 
     /**
      * Class name of the Idris application to execute.
@@ -63,16 +66,16 @@ public final class IdrisRunMojo extends AbstractMojo {
     private File appJar;
 
     /**
-     * The Maven Session Object
+     * The Maven Session Object.
      */
     @Parameter(property = "session", required = true, readonly = true)
-    protected MavenSession session;
+    private MavenSession session;
 
     /**
      * Used to look up Artifacts in the remote repository.
      */
     @Component
-    RepositorySystem repositorySystem;
+    private RepositorySystem repositorySystem;
 
     public void execute() throws MojoExecutionException {
         try {
@@ -89,7 +92,7 @@ public final class IdrisRunMojo extends AbstractMojo {
         }
     }
 
-    private ClassLoader getAppClassLoader(String idrHome, Log log)
+    private ClassLoader getAppClassLoader(final String idrHome, final Log log)
         throws DependencyResolutionRequiredException {
         if (idrHome == null || idrHome.isEmpty()) {
             return getRemoteAppClassLoader(log);
@@ -98,7 +101,7 @@ public final class IdrisRunMojo extends AbstractMojo {
         }
     }
 
-    private ClassLoader getRemoteAppClassLoader(Log logger) 
+    private ClassLoader getRemoteAppClassLoader(final Log logger)
         throws DependencyResolutionRequiredException {
         Artifact artifact = this.repositorySystem.createArtifact(
             "io.github.mmhelloworld", "idris-jvm-runtime", this.idrisVersion, "jar");
@@ -138,7 +141,7 @@ public final class IdrisRunMojo extends AbstractMojo {
         return new URLClassLoader(depJarUrls, null);
     }
 
-    private Set<Artifact> resolve(Artifact artifact) {
+    private Set<Artifact> resolve(final Artifact artifact) {
         ArtifactResolutionRequest request = new ArtifactResolutionRequest()
             .setArtifact(artifact).setResolveRoot(true)
             .setResolveTransitively(true).setServers(
@@ -157,8 +160,8 @@ public final class IdrisRunMojo extends AbstractMojo {
         File idrisHomeFile = new File(idrHome);
         File[] idrisHomeFiles = idrisHomeFile.listFiles();
         if (idrisHomeFiles == null) {
-            throw new RuntimeException("Either Idris home " + 
-                idrHome + " was not a directory, or an I/O error occurred");
+            throw new RuntimeException("Either Idris home "
+                + idrHome + " was not a directory, or an I/O error occurred");
         }
 
         Set<File> dependencies = project.getTestClasspathElements()
