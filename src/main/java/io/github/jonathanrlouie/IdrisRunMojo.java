@@ -47,7 +47,7 @@ public final class IdrisRunMojo extends AbstractMojo {
     @Parameter(property = "mainClass")
     private String mainClassName;
 
-    /** 
+    /**
      * Idris 2 version to use.
      */
     @Parameter(defaultValue = "0.5.1", property = "idris.version")
@@ -77,6 +77,9 @@ public final class IdrisRunMojo extends AbstractMojo {
     @Component
     private RepositorySystem repositorySystem;
 
+    /**
+     * The entrypoint of the Run Mojo.
+     */
     public void execute() throws MojoExecutionException {
         try {
             JavaCommand cmd = new JavaCommand();
@@ -104,7 +107,10 @@ public final class IdrisRunMojo extends AbstractMojo {
     private ClassLoader getRemoteAppClassLoader(final Log logger)
         throws DependencyResolutionRequiredException {
         Artifact artifact = this.repositorySystem.createArtifact(
-            "io.github.mmhelloworld", "idris-jvm-runtime", this.idrisVersion, "jar");
+            "io.github.mmhelloworld",
+            "idris-jvm-runtime",
+            this.idrisVersion,
+            "jar");
         Set<Artifact> resolvedArtifacts = this.resolve(artifact);
         if (resolvedArtifacts.size() == 0) {
             throw new RuntimeException(
