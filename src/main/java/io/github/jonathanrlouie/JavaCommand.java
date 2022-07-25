@@ -15,9 +15,9 @@ public final class JavaCommand {
 
     /**
      * Executes a Java program with given CLI arguments.
-     * 
+     *
      * @param mainClassName Name of class containing Main method to execute.
-     * @param cl Classloader required to execute Java program.
+     * @param classLoader Classloader required to execute Java program.
      * @param logger Logger for debugging.
      * @throws ClassNotFoundException if main class cannot be loaded.
      * @throws NoSuchMethodException if main method cannot be found.
@@ -26,12 +26,15 @@ public final class JavaCommand {
      */
     public void run(
         final String mainClassName,
-        ClassLoader cl,
+        final ClassLoader classLoader,
         final Log logger)
         throws ClassNotFoundException, NoSuchMethodException,
         IllegalAccessException, InvocationTargetException {
-        if (cl == null) {
+        ClassLoader cl;
+        if (classLoader == null) {
             cl = Thread.currentThread().getContextClassLoader();
+        } else {
+            cl = classLoader;
         }
 
         if (this.args.isEmpty()) {
