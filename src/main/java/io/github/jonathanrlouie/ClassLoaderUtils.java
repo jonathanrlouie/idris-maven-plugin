@@ -26,7 +26,7 @@ public final class ClassLoaderUtils {
      * @param idrisHome Path to a local installation of the idris-jvm-runtime.
      * @return The class loader for the Idris app with a user supplied
      * JVM runtime.
-     * @throws DependencyResolutionRequiredException if artifact file 
+     * @throws DependencyResolutionRequiredException if artifact file
      * used but not resolved when getting app dependencies.
      */
     public static ClassLoader getLocalAppClassLoader(
@@ -51,16 +51,16 @@ public final class ClassLoaderUtils {
     }
 
     /**
-     * Gets the class loader for the Idris app with a JVM runtime fetched 
+     * Gets the class loader for the Idris app with a JVM runtime fetched
      * from Maven Central.
      * @param repositorySystem RepositorySystem to resolve dependencies.
      * @param session MavenSession to resolve dependencies.
      * @param appJar JAR file of the Idris app to run.
      * @param project MavenProject of Idris app used to fetch dependencies.
      * @param version Version of the JVM runtime to fetch.
-     * @return The class loader for the Idris app with a JVM runtime 
+     * @return The class loader for the Idris app with a JVM runtime
      * fetched from Maven Central
-     * @throws DependencyResolutionRequiredException if artifact file 
+     * @throws DependencyResolutionRequiredException if artifact file
      * used but not resolved when getting app dependencies.
      */
     public static ClassLoader getRemoteAppClassLoader(
@@ -85,7 +85,7 @@ public final class ClassLoaderUtils {
      * @param repositorySystem RepositorySystem to resolve dependencies.
      * @param session MavenSession to resolve dependencies.
      * @param idrisVersion Version of the Idris compiler artifact to fetch.
-     * @return The class loader for the Idris compiler fetched 
+     * @return The class loader for the Idris compiler fetched
      * from Maven Central.
      */
     public static ClassLoader getRemoteCompilerClassLoader(
