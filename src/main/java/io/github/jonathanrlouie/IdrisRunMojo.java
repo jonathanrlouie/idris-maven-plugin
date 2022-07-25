@@ -1,11 +1,8 @@
 package io.github.jonathanrlouie;
 
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 
 import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -18,13 +15,6 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.repository.RepositorySystem;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.MalformedURLException;
 
 /**
  * Goal that runs Idris 2 code.
@@ -83,7 +73,7 @@ public final class IdrisRunMojo extends AbstractMojo {
     public void execute() throws MojoExecutionException {
         try {
             JavaCommand cmd = new JavaCommand();
-            ClassLoader cl = getAppClassLoader(idrisHome, getLog());
+            ClassLoader cl = getAppClassLoader(idrisHome);
 
             if (mainClassName == null || mainClassName.isEmpty()) {
                 throw new RuntimeException("mainClass property was not set.");
@@ -95,97 +85,20 @@ public final class IdrisRunMojo extends AbstractMojo {
         }
     }
 
-    private ClassLoader getAppClassLoader(final String idrHome, final Log log)
+    private ClassLoader getAppClassLoader(final String idrHome)
         throws DependencyResolutionRequiredException {
         if (idrHome == null || idrHome.isEmpty()) {
-            return getRemoteAppClassLoader(log);
+            return ClassLoaderUtils.getRemoteAppClassLoader(
+                this.repositorySystem,
+                this.session,
+                this.appJar,
+                this.project,
+                this.idrisVersion);
         } else {
-            return getLocalAppClassLoader(idrHome, log);
+            return ClassLoaderUtils.getLocalAppClassLoader(
+                this.project,
+                this.appJar,
+                idrHome);
         }
-    }
-
-    private ClassLoader getRemoteAppClassLoader(final Log logger)
-        throws DependencyResolutionRequiredException {
-        Artifact artifact = this.repositorySystem.createArtifact(
-            "io.github.mmhelloworld",
-            "idris-jvm-runtime",
-            this.idrisVersion,
-            "jar");
-        Set<Artifact> resolvedArtifacts = this.resolve(artifact);
-        if (resolvedArtifacts.size() == 0) {
-            throw new RuntimeException(
-                "No resolved artifacts found for idris-jvm-runtime");
-        }
-
-        List<File> jars = resolvedArtifacts.stream()
-            .map(Artifact::getFile)
-            .collect(Collectors.toList());
-        List<File> dependencies = project.getTestClasspathElements()
-            .stream()
-            .map(File::new)
-            .collect(Collectors.toSet())
-            .stream()
-            .collect(Collectors.toList());
-
-        jars.addAll(dependencies);
-        return getClassLoader(jars);
-    }
-
-    private Set<Artifact> resolve(final Artifact artifact) {
-        ArtifactResolutionRequest request = new ArtifactResolutionRequest()
-            .setArtifact(artifact).setResolveRoot(true)
-            .setResolveTransitively(true).setServers(
-                this.session.getRequest().getServers())
-            .setMirrors(this.session.getRequest().getMirrors())
-            .setProxies(this.session.getRequest().getProxies())
-            .setLocalRepository(this.session.getLocalRepository())
-            .setRemoteRepositories(this.session.getCurrentProject()
-                .getRemoteArtifactRepositories());
-        return this.repositorySystem.resolve(request).getArtifacts();
-    }
-
-    private ClassLoader getLocalAppClassLoader(
-        final String idrHome, final Log logger)
-        throws DependencyResolutionRequiredException {
-        File idrisHomeFile = new File(idrHome);
-        File[] idrisHomeFiles = idrisHomeFile.listFiles();
-        if (idrisHomeFiles == null) {
-            throw new RuntimeException("Either Idris home "
-                + idrHome + " was not a directory, or an I/O error occurred");
-        }
-
-        Set<File> dependencies = project.getTestClasspathElements()
-            .stream()
-            .map(File::new)
-            .collect(Collectors.toSet());
-
-        for (File f : new File(idrHome).listFiles()) {
-            String name = f.getName();
-            if (name.endsWith(".jar")) {
-                dependencies.add(f);
-            }
-        }
-        List<File> jars = dependencies.stream().collect(Collectors.toList());
-        return getClassLoader(jars);
-    }
-
-    private ClassLoader getClassLoader(final List<File> jars) {
-        if (this.appJar == null) {
-            throw new RuntimeException(
-                "No application jar found at appJar path");
-        }
-
-        // Make sure Application Jar is at beginning of classpath
-        jars.add(0, this.appJar);
-        File[] depJars = jars.toArray(new File[] {});
-        URL[] depJarUrls = Arrays.stream(depJars).map(file -> {
-            try {
-                return file.toURI().toURL();
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(
-                    "Failed to convert into url " + file, e);
-            }
-        }).toArray(URL[]::new);
-        return new URLClassLoader(depJarUrls, null);
     }
 }
