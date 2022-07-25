@@ -31,7 +31,7 @@ public class IdrisCompileMojo extends AbstractMojo {
      * The maven project.
      */
     @Parameter(property = "project", required = true, readonly = true)
-    protected MavenProject project;
+    private MavenProject project;
 
     /**
      * Name of the output file. Equivalent to
@@ -61,7 +61,7 @@ public class IdrisCompileMojo extends AbstractMojo {
     @Parameter(required = false, property = "maven.idris.className")
     private String idrisClassName;
 
-    /** 
+    /**
      * Idris 2 version to use.
      */
     @Parameter(defaultValue = "0.5.1", property = "idris.version")
@@ -74,14 +74,14 @@ public class IdrisCompileMojo extends AbstractMojo {
     private String idrisHome;
 
     /**
-     * The Maven Session Object
+     * The Maven Session Object.
      */
     @Parameter(property = "session", required = true, readonly = true)
-    protected MavenSession session;
+    private MavenSession session;
 
     /** Used to look up Artifacts in the remote repository. */
     @Component
-    RepositorySystem repositorySystem;
+    private RepositorySystem repositorySystem;
 
     public void execute() throws MojoExecutionException {
         try {
