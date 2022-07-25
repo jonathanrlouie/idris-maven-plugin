@@ -128,23 +128,7 @@ public final class IdrisRunMojo extends AbstractMojo {
             .collect(Collectors.toList());
 
         jars.addAll(dependencies);
-        if (appJar == null) {
-            throw new RuntimeException(
-                "No application jar found at appJar path");
-        }
-
-        // Make sure Application Jar is at beginning of classpath
-        jars.add(0, appJar);
-        File[] depJars = jars.toArray(new File[] {});
-        URL[] depJarUrls = Arrays.stream(depJars).map(file -> {
-            try {
-                return file.toURI().toURL();
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(
-                    "Failed to convert into url " + file, e);
-            }
-        }).toArray(URL[]::new);
-        return new URLClassLoader(depJarUrls, null);
+        return getClassLoader(jars);
     }
 
     private Set<Artifact> resolve(final Artifact artifact) {
@@ -182,14 +166,17 @@ public final class IdrisRunMojo extends AbstractMojo {
             }
         }
         List<File> jars = dependencies.stream().collect(Collectors.toList());
+        return getClassLoader(jars);
+    }
 
-        if (appJar == null) {
+    private ClassLoader getClassLoader(List<File> jars) {
+        if (this.appJar == null) {
             throw new RuntimeException(
                 "No application jar found at appJar path");
         }
 
         // Make sure Application Jar is at beginning of classpath
-        jars.add(0, appJar);
+        jars.add(0, this.appJar);
         File[] depJars = jars.toArray(new File[] {});
         URL[] depJarUrls = Arrays.stream(depJars).map(file -> {
             try {
