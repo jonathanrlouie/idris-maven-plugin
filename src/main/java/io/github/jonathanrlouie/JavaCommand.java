@@ -8,8 +8,22 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.maven.plugin.logging.Log;
 
 public final class JavaCommand {
+    /**
+     * List of CLI arguments to the Java command.
+     */
     private List<String> args = new ArrayList<String>();
 
+    /**
+     * Executes a Java program with given CLI arguments.
+     * 
+     * @param mainClassName Name of class containing Main method to execute.
+     * @param cl Classloader required to execute Java program.
+     * @param logger Logger for debugging.
+     * @throws ClassNotFoundException if main class cannot be loaded.
+     * @throws NoSuchMethodException if main method cannot be found.
+     * @throws IllegalAccessException if main method is inaccessible.
+     * @throws InvocationTargetException if main method throws an exception.
+     */
     public void run(
         final String mainClassName,
         ClassLoader cl,
@@ -40,14 +54,24 @@ public final class JavaCommand {
 
         // TODO - Redirect System.in System.err and System.out
 
-        mainMethod.invoke(null, new Object[] { argArray });
+        mainMethod.invoke(null, new Object[] {argArray});
     }
 
-    public void addOption(final String key, final String value) {
-        this.args.add(key);
-        this.args.add(value);
+    /**
+     * Adds a CLI option to the Java command.
+     * For example, option could be "-o" with arg "binaryName".
+     * @param option CLI option.
+     * @param arg Argument to CLI option.
+     */
+    public void addOption(final String option, final String arg) {
+        this.args.add(option);
+        this.args.add(arg);
     }
 
+    /**
+     * Adds a space separated list of arguments to the Java command.
+     * @param args1 List of command arguments.
+     */
     public void addArgs(final String... args1) {
         for (String arg : args1) {
             this.args.add(arg);

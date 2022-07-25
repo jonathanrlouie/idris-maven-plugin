@@ -72,32 +72,35 @@ public final class IdrisCompileMojo extends AbstractMojo {
     @Component
     private RepositorySystem repositorySystem;
 
+    /**
+     * The entrypoint of the Compile Mojo.
+     */
     public void execute() throws MojoExecutionException {
         try {
             JavaCommand cmd = new JavaCommand();
-            cmd.addOption("-o", outputFile);
-            cmd.addOption("--output-dir", outputDir);
-            cmd.addArgs(mainFile.getAbsolutePath());
-            ClassLoader cl = getCompilerClassLoader(idrisHome);
-            String mainClassName = compilerMainClassName(idrisClassName);
+            cmd.addOption("-o", this.outputFile);
+            cmd.addOption("--output-dir", this.outputDir);
+            cmd.addArgs(this.mainFile.getAbsolutePath());
+            ClassLoader cl = getCompilerClassLoader(this.idrisHome);
+            String mainClassName = compilerMainClassName(this.idrisClassName);
             cmd.run(mainClassName, cl, getLog());
         } catch (Exception e) {
             throw new MojoExecutionException("Source error: " + e, e);
         }
     }
 
-    private ClassLoader getCompilerClassLoader(String idrisHome) {
-        if (idrisHome == null || idrisHome.isEmpty()) {
+    private ClassLoader getCompilerClassLoader(final String idrHome) {
+        if (idrHome == null || idrHome.isEmpty()) {
             return ClassLoaderUtils.getRemoteCompilerClassLoader(
                 this.repositorySystem,
                 this.session,
                 this.idrisVersion);
         } else {
-            return ClassLoaderUtils.getLocalCompilerClassLoader(idrisHome);
+            return ClassLoaderUtils.getLocalCompilerClassLoader(idrHome);
         }
     }
 
-    private String compilerMainClassName(String override) {
+    private String compilerMainClassName(final String override) {
         if (override == null || override.isEmpty()) {
             return "idris2.Main";
         } else {

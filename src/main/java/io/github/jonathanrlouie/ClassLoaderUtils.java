@@ -17,8 +17,18 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 
 public final class ClassLoaderUtils {
-    private ClassLoaderUtils() {}
+    private ClassLoaderUtils() { }
 
+    /**
+     * 
+     * @param project MavenProject of Idris app used to fetch dependencies.
+     * @param appJar JAR file of the Idris app to run.
+     * @param idrisHome Path to a local installation of the idris-jvm-runtime.
+     * @return Gets the class loader for the Idris app with a user supplied
+     * JVM runtime.
+     * @throws DependencyResolutionRequiredException if artifact file 
+     * used but not resolved when getting app dependencies.
+     */
     public static ClassLoader getLocalAppClassLoader(
         final MavenProject project,
         final File appJar,
@@ -30,28 +40,53 @@ public final class ClassLoaderUtils {
             prependAppJar(appJar, Stream.concat(appDependencies, jars)));
     }
 
+    /**
+     * 
+     * @param idrisHome Path to a local installation of the idris-jvm-compiler.
+     * @return Gets the class loader for the Idris compiler given by the user.
+     */
     public static ClassLoader getLocalCompilerClassLoader(
         final String idrisHome) {
         return getClassLoader(getLocalCompilerJars(idrisHome));
     }
 
+    /**
+     * 
+     * @param repositorySystem RepositorySystem to resolve dependencies.
+     * @param session MavenSession to resolve dependencies.
+     * @param appJar JAR file of the Idris app to run.
+     * @param project MavenProject of Idris app used to fetch dependencies.
+     * @param version Version of the JVM runtime to fetch.
+     * @return Gets the class loader for the Idris app with a JVM runtime 
+     * fetched from Maven Central
+     * @throws DependencyResolutionRequiredException if artifact file 
+     * used but not resolved when getting app dependencies.
+     */
     public static ClassLoader getRemoteAppClassLoader(
         final RepositorySystem repositorySystem,
         final MavenSession session,
         final File appJar,
         final MavenProject project,
-        final String idrisVersion)
+        final String version)
         throws DependencyResolutionRequiredException {
         Stream<File> appDependencies = getAppDependencies(project);
         Stream<File> jars = getRemoteArtifactJars(
             repositorySystem,
             session,
             "idris-jvm-runtime",
-            idrisVersion);
+            version);
         return getClassLoader(
             prependAppJar(appJar, Stream.concat(appDependencies, jars)));
     }
 
+    /**
+     * 
+     * @param repositorySystem RepositorySystem to resolve dependencies.
+     * @param session MavenSession to resolve dependencies.
+     * @param idrisVersion Version of the Idris compiler artifact to fetch.
+     * @return Gets the class loader for the Idris compiler fetched 
+     * from Maven Central.
+     */
     public static ClassLoader getRemoteCompilerClassLoader(
         final RepositorySystem repositorySystem,
         final MavenSession session,
