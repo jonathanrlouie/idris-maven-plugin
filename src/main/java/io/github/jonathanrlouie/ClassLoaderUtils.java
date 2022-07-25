@@ -17,6 +17,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 
 public final class ClassLoaderUtils {
+    private ClassLoaderUtils() {}
 
     public static ClassLoader getLocalAppClassLoader(
         final MavenProject project,
@@ -129,7 +130,8 @@ public final class ClassLoaderUtils {
             .stream();
     }
 
-    private static Stream<File> prependAppJar(final File appJar, final Stream<File> jars) {
+    private static Stream<File> prependAppJar(
+        final File appJar, final Stream<File> jars) {
         if (appJar == null) {
             throw new RuntimeException(
                 "No application jar found at appJar path");

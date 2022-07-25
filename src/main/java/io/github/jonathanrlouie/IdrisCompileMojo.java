@@ -15,7 +15,7 @@ import java.io.File;
  * Goal that compiles Idris 2 code.
  */
 @Mojo(name = "compile", defaultPhase = LifecyclePhase.COMPILE)
-public class IdrisCompileMojo extends AbstractMojo {
+public final class IdrisCompileMojo extends AbstractMojo {
     /**
      * The maven project.
      */
@@ -30,15 +30,15 @@ public class IdrisCompileMojo extends AbstractMojo {
     private String outputFile;
 
     /**
-     * Location of build output directory relative to current directory. Equivalent
-     * to setting the --output-dir option of the Idris compiler.
+     * Location of build output directory relative to current directory.
+     * Equivalent to setting the --output-dir option of the Idris compiler.
      */
     @Parameter(defaultValue = ".", property = "outputDir")
     private String outputDir;
 
     /**
-     * The file with the main function. Equivalent to the primary argument given to
-     * the Idris compiler. This is required for now until
+     * The file with the main function. Equivalent to the primary argument
+     * given to the Idris compiler. This is required for now until
      * https://github.com/idris-lang/Idris2/issues/475 is resolved.
      */
     @Parameter(defaultValue = "Main.idr", property = "mainFile")

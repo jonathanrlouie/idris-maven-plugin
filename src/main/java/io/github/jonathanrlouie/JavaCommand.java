@@ -7,7 +7,7 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.InvocationTargetException;
 import org.apache.maven.plugin.logging.Log;
 
-public class JavaCommand {
+public final class JavaCommand {
     private List<String> args = new ArrayList<String>();
 
     public void run(
@@ -43,12 +43,12 @@ public class JavaCommand {
         mainMethod.invoke(null, new Object[] { argArray });
     }
 
-    public void addOption(String key, String value) {
+    public void addOption(final String key, final String value) {
         this.args.add(key);
         this.args.add(value);
     }
 
-    public void addArgs(String... args1) {
+    public void addArgs(final String... args1) {
         for (String arg : args1) {
             this.args.add(arg);
         }
