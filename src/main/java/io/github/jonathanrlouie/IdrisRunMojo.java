@@ -169,7 +169,7 @@ public final class IdrisRunMojo extends AbstractMojo {
         return getClassLoader(jars);
     }
 
-    private ClassLoader getClassLoader(List<File> jars) {
+    private ClassLoader getClassLoader(final List<File> jars) {
         if (this.appJar == null) {
             throw new RuntimeException(
                 "No application jar found at appJar path");
