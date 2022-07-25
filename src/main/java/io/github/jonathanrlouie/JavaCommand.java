@@ -10,8 +10,12 @@ import org.apache.maven.plugin.logging.Log;
 public class JavaCommand {
     private List<String> args = new ArrayList<String>();
 
-    public void run(String mainClassName, ClassLoader cl, Log logger)
-            throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+    public void run(
+        final String mainClassName,
+        ClassLoader cl,
+        final Log logger)
+        throws ClassNotFoundException, NoSuchMethodException,
+        IllegalAccessException, InvocationTargetException {
         if (cl == null) {
             cl = Thread.currentThread().getContextClassLoader();
         }
@@ -27,7 +31,8 @@ public class JavaCommand {
         Class<?> mainClass = cl.loadClass(mainClassName);
         Method mainMethod = mainClass.getMethod("main", String[].class);
         int mods = mainMethod.getModifiers();
-        if (mainMethod.getReturnType() != void.class || !Modifier.isStatic(mods) || !Modifier.isPublic(mods)) {
+        if (mainMethod.getReturnType() != void.class
+        || !Modifier.isStatic(mods) || !Modifier.isPublic(mods)) {
             throw new NoSuchMethodException("main");
         }
 

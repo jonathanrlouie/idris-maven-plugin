@@ -1,7 +1,5 @@
 package io.github.jonathanrlouie;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -12,15 +10,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.repository.RepositorySystem;
 import java.io.File;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.net.MalformedURLException;
-
-import org.apache.maven.plugin.logging.Log;
 
 /**
  * Goal that compiles Idris 2 code.
@@ -89,7 +78,7 @@ public class IdrisCompileMojo extends AbstractMojo {
             cmd.addOption("-o", outputFile);
             cmd.addOption("--output-dir", outputDir);
             cmd.addArgs(mainFile.getAbsolutePath());
-            ClassLoader cl = getCompilerClassLoader(idrisHome, getLog());
+            ClassLoader cl = getCompilerClassLoader(idrisHome);
             String mainClassName = compilerMainClassName(idrisClassName);
             cmd.run(mainClassName, cl, getLog());
         } catch (Exception e) {
@@ -97,65 +86,15 @@ public class IdrisCompileMojo extends AbstractMojo {
         }
     }
 
-    private ClassLoader getCompilerClassLoader(String idrisHome, Log log) throws Exception {
+    private ClassLoader getCompilerClassLoader(String idrisHome) {
         if (idrisHome == null || idrisHome.isEmpty()) {
-            return getRemoteCompilerClassLoader(log);
+            return ClassLoaderUtils.getRemoteCompilerClassLoader(
+                this.repositorySystem,
+                this.session,
+                this.idrisVersion);
         } else {
-            return getLocalCompilerClassLoader(idrisHome);
+            return ClassLoaderUtils.getLocalCompilerClassLoader(idrisHome);
         }
-    }
-
-    private ClassLoader getRemoteCompilerClassLoader(Log log) {
-        Artifact artifact = this.repositorySystem.createArtifact("io.github.mmhelloworld", "idris-jvm-compiler", this.idrisVersion, "jar");
-        Set<Artifact> resolvedArtifacts = this.resolve(artifact);
-        if (resolvedArtifacts.size() == 0) {
-            throw new RuntimeException("No resolved artifacts found for Idris compiler");
-        }
-
-        File[] compilerJars = resolvedArtifacts.stream().map(Artifact::getFile).collect(Collectors.toList())
-                .toArray(new File[] {});
-        URL[] compilerJarUrls = Arrays.stream(compilerJars).map(file -> {
-            try {
-                return file.toURI().toURL();
-            } catch (MalformedURLException e) {
-                throw new RuntimeException("failed to convert into url " + file, e);
-            }
-        }).toArray(URL[]::new);
-        return new URLClassLoader(compilerJarUrls, null);
-    }
-
-    private Set<Artifact> resolve(Artifact artifact) {
-        ArtifactResolutionRequest request = new ArtifactResolutionRequest().setArtifact(artifact).setResolveRoot(true)
-                .setResolveTransitively(true).setServers(this.session.getRequest().getServers())
-                .setMirrors(this.session.getRequest().getMirrors()).setProxies(this.session.getRequest().getProxies())
-                .setLocalRepository(this.session.getLocalRepository())
-                .setRemoteRepositories(this.session.getCurrentProject().getRemoteArtifactRepositories());
-        return this.repositorySystem.resolve(request).getArtifacts();
-    }
-
-    private ClassLoader getLocalCompilerClassLoader(String idrisHome) throws Exception {
-        Set<File> d = new TreeSet<>();
-        File idrisHomeFile = new File(idrisHome);
-        File[] idrisHomeFiles = idrisHomeFile.listFiles();
-        if (idrisHomeFiles == null) {
-            throw new Exception("Either Idris home " + idrisHome + " was not a directory, or an I/O error occurred");
-        }
-
-        for (File f : idrisHomeFiles) {
-            String name = f.getName();
-            if (name.endsWith(".jar")) {
-                d.add(f);
-            }
-        }
-        File[] compilerJars = d.stream().collect(Collectors.toList()).toArray(new File[] {});
-        URL[] compilerJarUrls = Arrays.stream(compilerJars).map(file -> {
-            try {
-                return file.toURI().toURL();
-            } catch (MalformedURLException e) {
-                throw new RuntimeException("failed to convert into url " + file, e);
-            }
-        }).toArray(URL[]::new);
-        return new URLClassLoader(compilerJarUrls, null);
     }
 
     private String compilerMainClassName(String override) {
