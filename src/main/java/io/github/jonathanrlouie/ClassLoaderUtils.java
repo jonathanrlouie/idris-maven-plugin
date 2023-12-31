@@ -1,13 +1,21 @@
 package io.github.jonathanrlouie;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Enumeration;
+import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -71,11 +79,14 @@ public final class ClassLoaderUtils {
         final String version)
         throws DependencyResolutionRequiredException {
         Stream<File> appDependencies = getAppDependencies(project);
-        Stream<File> jars = getRemoteArtifactJars(
+        Set<Artifact> artifacts = getRemoteArtifacts(
             repositorySystem,
             session,
             "idris-jvm-runtime",
-            version);
+            version,
+            "jar");
+        Stream<File> jars = artifacts.stream()
+            .map(Artifact::getFile);
         return getClassLoader(
             prependAppJar(appJar, Stream.concat(appDependencies, jars)));
     }
@@ -92,12 +103,39 @@ public final class ClassLoaderUtils {
         final RepositorySystem repositorySystem,
         final MavenSession session,
         final String idrisVersion) {
-        Stream<File> jars = getRemoteArtifactJars(
+        Set<Artifact> jars = getRemoteArtifacts(
             repositorySystem,
             session,
             "idris-jvm-compiler",
-            idrisVersion);
-        return getClassLoader(jars);
+            idrisVersion,
+            "jar");
+        Set<Artifact> zips = getRemoteArtifacts(
+            repositorySystem,
+            session,
+            "idris-jvm-compiler",
+            idrisVersion,
+            "zip");
+
+        for (Artifact zip : zips) {
+            File artifactFile = zip.getFile();
+            try (ZipFile zipFile = new ZipFile(artifactFile)) {
+                Enumeration<? extends ZipEntry> entries = zipFile.entries();
+                while (entries.hasMoreElements()) {
+                    ZipEntry entry = entries.nextElement();
+                    File entryDestination = new File(artifactFile.getParent(), entry.getName());
+                    if (entry.isDirectory()) {
+                        entryDestination.mkdirs();
+                    } else {
+                        entryDestination.getParentFile().mkdirs();
+                        zipFile.getInputStream(entry).transferTo(new FileOutputStream(entryDestination));
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to unzip Idris base libraries");
+            }
+        }
+
+        return getClassLoader(jars.stream().map(Artifact::getFile));
     }
 
     private static Stream<File> getLocalCompilerJars(final String idrisHome) {
@@ -118,16 +156,17 @@ public final class ClassLoaderUtils {
         return dependencies.stream();
     }
 
-    private static Stream<File> getRemoteArtifactJars(
+    private static Set<Artifact> getRemoteArtifacts(
         final RepositorySystem repositorySystem,
         final MavenSession session,
         final String artifactId,
-        final String version) {
+        final String version,
+        final String packagingType) {
         Artifact artifact = repositorySystem.createArtifact(
             "io.github.mmhelloworld",
             artifactId,
             version,
-            "jar");
+            packagingType);
         Set<Artifact> resolvedArtifacts = resolveArtifacts(
             repositorySystem,
             session,
@@ -137,8 +176,7 @@ public final class ClassLoaderUtils {
                 "No resolved artifacts found for " + artifactId);
         }
 
-        return resolvedArtifacts.stream()
-            .map(Artifact::getFile);
+        return resolvedArtifacts;
     }
 
     private static Set<Artifact> resolveArtifacts(
