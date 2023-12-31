@@ -122,12 +122,21 @@ public final class ClassLoaderUtils {
                 Enumeration<? extends ZipEntry> entries = zipFile.entries();
                 while (entries.hasMoreElements()) {
                     ZipEntry entry = entries.nextElement();
-                    File entryDestination = new File(artifactFile.getParent(), entry.getName());
+                    File destinationDir = artifactFile.getParentFile();
+                    String canonicalDestinationDirPath = destinationDir.getCanonicalPath();
+                    File destinationFile = new File(destinationDir, entry.getName());
+                    String canonicalDestinationFile = destinationFile.getCanonicalPath();
+
+                    // This is meant to avoid Zip Slip vulnerability
+                    if (!canonicalDestinationFile.startsWith(canonicalDestinationDirPath + File.separator)) { 
+                        throw new RuntimeException("Entry is outside of the target dir: " + entry.getName()); 
+                    }
+
                     if (entry.isDirectory()) {
-                        entryDestination.mkdirs();
+                        destinationFile.mkdirs();
                     } else {
-                        entryDestination.getParentFile().mkdirs();
-                        zipFile.getInputStream(entry).transferTo(new FileOutputStream(entryDestination));
+                        destinationFile.getParentFile().mkdirs();
+                        zipFile.getInputStream(entry).transferTo(new FileOutputStream(destinationFile));
                     }
                 }
             } catch (IOException e) {
