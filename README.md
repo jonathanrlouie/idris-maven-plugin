@@ -25,6 +25,16 @@ mvn archetype:generate                                  \
   -DartifactId=<my-artifactId>
 ```
 
+You will need to set the `IDRIS2_PREFIX` environment variable to make the base Idris2 libraries accessible.
+
+By default, the plugin will automatically download the Idris2 compiler and the base libs to the local Maven Artifact Repository. The default artifact repository directory is in the `.m2` directory in the home directory.
+
+On UNIX and Linux, that is `~/.m2/repository/io/github/mmhelloworld/idris-jvm-compiler/0.5.1/idris2-0.5.1/lib`
+
+On Windows, that is `C:\Documents and Settings\UserName\.m2\repository\io\github\mmhelloworld\idris-jvm-compiler\0.5.1\idris2-0.5.1\lib`
+
+For example, if you are on Linux with all of the Maven plugin's default settings, you should run `export IDRIS2_PREFIX=~/.m2/repository/io/github/mmhelloworld/idris-jvm-compiler/0.5.1/idris2-0.5.1/lib` from the command line to set the `IDRIS2_PREFIX` environment variable correctly.
+
 You should now be able to compile and run the project using `mvn idris:run` from the root of the newly created project.
 
 ## How to run the examples
