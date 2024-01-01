@@ -2,7 +2,6 @@ package io.github.jonathanrlouie;
 
 
 import org.apache.maven.plugin.testing.MojoRule;
-import org.apache.maven.plugin.testing.WithoutMojo;
 
 import org.junit.Rule;
 import static org.junit.Assert.*;
